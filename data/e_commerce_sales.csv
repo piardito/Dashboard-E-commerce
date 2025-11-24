@@ -1,0 +1,21 @@
+order_id,date,product,category,unit_price,quantity,region,customer_age,customer_gender
+1001,2024-01-03,Smartphone X,Électronique,699,1,Île-de-France,34,M
+1002,2024-01-04,Casque Audio Pro,Électronique,129,2,Auvergne-Rhône-Alpes,27,F
+1003,2024-01-05,Chaise Confort,Maison,89,1,Occitanie,45,F
+1004,2024-01-06,Montre Sport,Accessoires,149,1,Île-de-France,31,M
+1005,2024-01-07,Lampe LED Design,Maison,59,3,Nouvelle-Aquitaine,52,F
+1006,2024-01-07,Tapis de Yoga,Fitness,25,2,Bretagne,29,F
+1007,2024-01-08,Ordinateur Portable Y,Électronique,999,1,Hauts-de-France,41,M
+1008,2024-01-09,Basket Running,Fitness,79,1,PACA,22,M
+1009,2024-01-10,Four Micro-ondes,Électroménager,140,1,Grand Est,48,F
+1010,2024-01-11,Clavier Mécanique,Électronique,85,1,Île-de-France,36,M
+1011,2024-01-12,Bouteille Isotherme,Accessoires,30,2,Normandie,33,F
+1012,2024-01-14,Bureau Ergonomique,Maison,250,1,Centre-Val de Loire,57,M
+1013,2024-01-15,Lunettes VR,Électronique,299,1,PACA,26,M
+1014,2024-01-16,Écouteurs Sans Fil,Électronique,59,2,Bretagne,31,F
+1015,2024-01-18,Ballons Pilates,Fitness,18,3,Grand Est,46,F
+1016,2024-01-20,Aspirateur Robot,Électroménager,399,1,Occitanie,44,M
+1017,2024-01-21,Table Basse Bois,Maison,120,1,Nouvelle-Aquitaine,53,F
+1018,2024-01-22,Souris Gaming,Électronique,49,1,Auvergne-Rhône-Alpes,19,M
+1019,2024-01-23,Gourde Sport,Fitness,22,2,Île-de-France,24,F
+1020,2024-01-24,Cafetière Filtre,Électroménager,85,1,Nouvelle-Aquitaine,38,M
