@@ -1,7 +1,8 @@
 from streamlit_extras.stylable_container import stylable_container
 
 import streamlit as st
-from utils.auth_duckdb import auth_form, delete_session
+#from utils.auth_duckdb import auth_form, delete_session
+from utils.auth_supabase import require_login, auth_form, delete_session
 from utils.data_loader import load_data
 
 st.markdown("""
