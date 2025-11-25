@@ -36,8 +36,8 @@ st.title("Ventes")
 # ---------------------------------------------------
 # 🔥 Fonction animation des nombres (KPI animés)
 # ---------------------------------------------------
-def animate_number(final_value, duration=0.9, steps=35, integer=False):
-    """Affiche un nombre animée type dashboard pro"""
+def animate_number(final_value, duration=0.9, steps=35, integer=False, euro=False):
+    """Affiche un nombre animé, avec option €"""
     placeholder = st.empty()
     increment = final_value / steps
     delay = duration / steps
@@ -45,27 +45,34 @@ def animate_number(final_value, duration=0.9, steps=35, integer=False):
 
     for _ in range(steps):
         if integer:
-            txt = f"{int(current):,}".replace(",", " ")
+            value = f"{int(current):,}".replace(",", " ")
         else:
-            txt = f"{current:,.2f}".replace(",", " ")
+            value = f"{current:,.2f}".replace(",", " ")
+
+        if euro:
+            value += " €"
 
         placeholder.markdown(
-            f"<div style='font-size: 2rem; font-weight: 700;'>{txt}</div>",
+            f"<div style='font-size: 1.8rem; font-weight: 700;'>{value}</div>",
             unsafe_allow_html=True,
         )
         current += increment
         time.sleep(delay)
 
-    # final clean value
+    # valeur finale
     if integer:
-        txt = f"{int(final_value):,}".replace(",", " ")
+        value = f"{int(final_value):,}".replace(",", " ")
     else:
-        txt = f"{final_value:,.2f}".replace(",", " ")
+        value = f"{final_value:,.2f}".replace(",", " ")
+
+    if euro:
+        value += " €"
 
     placeholder.markdown(
-        f"<div style='font-size: 2rem; font-weight: 700;'>{txt}</div>",
+        f"<div style='font-size: 1.8rem; font-weight: 700;'>{value}</div>",
         unsafe_allow_html=True,
     )
+
 
 
 # ---------------------------------------------------
@@ -93,22 +100,24 @@ LABEL = "font-size: 0.95rem; opacity: 0.85; margin-top: 6px;"
 with k1:
     with stylable_container(key="kpi1", css_styles=CARD_STYLE):
         final = float(total_revenue(df))
-        animate_number(final, duration=1.0, steps=40, integer=True)
+        animate_number(final, duration=1.0, steps=40, integer=True, euro=True)
         st.markdown(
             f"<div style='{LABEL}'>Chiffre d'affaires total</div>",
             unsafe_allow_html=True,
         )
 
 
+
 # ------------- KPI 2 : Panier moyen -------------
 with k2:
     with stylable_container(key="kpi2", css_styles=CARD_STYLE):
         final = float(average_order_value(df))
-        animate_number(final, duration=1.0, steps=40, integer=False)
+        animate_number(final, duration=1.0, steps=40, integer=False, euro=True)
         st.markdown(
             f"<div style='{LABEL}'>Panier moyen</div>",
             unsafe_allow_html=True,
         )
+
 
 
 # ------------- KPI 3 : Produit le plus vendu -------------
@@ -116,11 +125,10 @@ with k3:
     with stylable_container(key="kpi3", css_styles=CARD_STYLE):
         best_product = top_products(df, 1).iloc[0]["product"]
 
-        # Fade-in animation
         placeholder = st.empty()
         for opacity in [0.1, 0.3, 0.5, 0.8, 1]:
             placeholder.markdown(
-                f"<div style='font-size: 2rem; font-weight: 700; opacity:{opacity};'>{best_product}</div>",
+                f"<div style='font-size: 1.6rem; font-weight: 700; opacity:{opacity};'>{best_product}</div>",
                 unsafe_allow_html=True,
             )
             time.sleep(0.05)
@@ -129,6 +137,7 @@ with k3:
             f"<div style='{LABEL}'>Produit le plus vendu</div>",
             unsafe_allow_html=True,
         )
+
 
 
 # ---------------------------------------------------
