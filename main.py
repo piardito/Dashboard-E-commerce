@@ -88,3 +88,4 @@ df = load_data("data/e_commerce_sales.csv")
 # --------------------------------------------------------------------
 st.subheader("Aperçu des données")
 st.dataframe(df.head())
+

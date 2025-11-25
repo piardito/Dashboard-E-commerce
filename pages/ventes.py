@@ -1,7 +1,7 @@
 from streamlit_extras.stylable_container import stylable_container
 
 import streamlit as st
-from utils.auth_duckdb import require_login
+from utils.auth_supabase import require_login
 from utils.charts import plot_sales_by_category, plot_sales_over_time
 from utils.data_loader import load_data
 from utils.metrics import average_order_value, top_products, total_revenue
