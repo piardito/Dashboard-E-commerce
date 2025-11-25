@@ -1,9 +1,8 @@
 import datetime
 import secrets
-import pandas as pd
-from supabase import create_client
-import streamlit as st
 import hashlib
+import streamlit as st
+from supabase import create_client
 
 # -----------------------------
 # CONFIGURATION SUPABASE
@@ -19,45 +18,54 @@ PBKDF2_ITER = 200_000
 HASH_NAME = "sha256"
 
 # -----------------------------
-# HASH DUCKDB EXISTANT
+# HASH DES MOTS DE PASSE
 # -----------------------------
 def _hash_password(password: str, salt: str) -> str:
-    """Hash du mot de passe compatible avec l’ancien DuckDB"""
+    """Hash du mot de passe compatible DuckDB"""
     return hashlib.pbkdf2_hmac(
         HASH_NAME, password.encode(), bytes.fromhex(salt), PBKDF2_ITER
     ).hex()
 
 def verify_password(stored_hash: str, salt_hex: str, password: str) -> bool:
-    """Vérifie le mot de passe contre le hash et le sel stocké"""
+    """Vérifie le mot de passe"""
     return secrets.compare_digest(_hash_password(password, salt_hex), stored_hash)
 
 # -----------------------------
 # UTILISATEURS
 # -----------------------------
 def get_user_by_email(email: str):
-    """Récupère un utilisateur depuis Supabase par email"""
     res = supabase.table("users").select("*").eq("email", email.lower()).execute()
-    data = res.data
-    if data:
-        return data[0]
+    if res.data:
+        return res.data[0]
     return None
 
 def create_user(email: str, username: str, password: str):
-    """Crée un utilisateur (hash + sel)"""
-    salt = secrets.token_hex(16)  # 16 bytes
+    """Crée un utilisateur dans Supabase"""
+    if get_user_by_email(email):
+        st.error("Un compte existe déjà pour cet email.")
+        return None
+
+    salt = secrets.token_hex(16)
     password_hash = _hash_password(password, salt)
     user = {
         "email": email.lower(),
         "username": username,
         "password_hash": password_hash,
         "salt": salt,
-        # "created_at": datetime.datetime.utcnow().isoformat(), # facultatif si default NOW()
+        # "created_at": datetime.datetime.utcnow().isoformat(),  # facultatif si default NOW()
     }
-    supabase.table("users").insert(user).execute()
-    return get_user_by_email(email)
+
+    try:
+        res = supabase.table("users").insert(user).execute()
+        if res.status_code != 201:
+            st.error(f"Erreur lors de la création du compte: {res.data}")
+            return None
+        return get_user_by_email(email)
+    except Exception as e:
+        st.error(f"Erreur Supabase: {e}")
+        return None
 
 def authenticate_user(email: str, password: str):
-    """Authentifie un utilisateur"""
     user = get_user_by_email(email)
     if user and verify_password(user["password_hash"], user["salt"], password):
         return user
@@ -84,11 +92,10 @@ def create_session(user_id: int):
 
 def get_session(token: str):
     res = supabase.table("sessions").select("*").eq("token", token).execute()
-    data = res.data
-    if not data:
+    if not res.data:
         return None
-    session = data[0]
-    expires_at = pd.to_datetime(session["expires_at"])
+    session = res.data[0]
+    expires_at = datetime.datetime.fromisoformat(session["expires_at"])
     if datetime.datetime.utcnow() > expires_at:
         delete_session(token)
         return None
@@ -105,7 +112,7 @@ def restore_session():
         res = supabase.table("sessions").select("*").order("created_at", desc=True).limit(1).execute()
         if res.data:
             session = res.data[0]
-            expires_at = pd.to_datetime(session["expires_at"])
+            expires_at = datetime.datetime.fromisoformat(session["expires_at"])
             if datetime.datetime.utcnow() < expires_at:
                 st.session_state["session_token"] = session["token"]
                 st.session_state["user_id"] = session["user_id"]
@@ -151,12 +158,8 @@ def auth_form():
                     st.error("Remplis tous les champs.")
                 elif password != password2:
                     st.error("Les mots de passe ne correspondent pas.")
-                elif get_user_by_email(email):
-                    st.error("Un compte existe déjà pour cet email.")
                 else:
                     user = create_user(email, username, password)
                     if user:
                         st.success("Compte créé ! Connecte-toi maintenant.")
                         st.rerun()
-                    else:
-                        st.error("Erreur lors de la création du compte.")
