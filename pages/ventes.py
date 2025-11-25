@@ -1,150 +1,171 @@
 from streamlit_extras.stylable_container import stylable_container
 import streamlit as st
+import time
+
 from utils.auth_supabase import require_login
 from utils.charts import plot_sales_by_category, plot_sales_over_time
 from utils.data_loader import load_data
 from utils.metrics import average_order_value, top_products, total_revenue
 
 
-# -------------------------------------------------------------------
-# ------------------------ STYLE GLOBAL ------------------------------
-# -------------------------------------------------------------------
-
+# ------------------------------
+# BACKGROUND GÉNÉRAL
+# ------------------------------
 st.markdown(
     """
 <style>
-/* ---- Background de Dashboard Premium ---- */
 .stApp {
-    background: linear-gradient(135deg, #eef7ff, #d9f1ff);
-    font-family: "Inter", sans-serif;
+    background: linear-gradient(135deg, #D0E8FF, #4DD0E1);
 }
-
-/* ---- Titres ---- */
-h1, h2, h3 {
-    font-family: "Inter", sans-serif !important;
-    font-weight: 700 !important;
-}
-
-/* ---- Petits textes ---- */
-p, div, span {
-    font-family: "Inter", sans-serif !important;
-}
-
-/* ---- Amélioration de la taille des KPI ---- */
-.kpi-value {
-    font-size: 2.7rem;
-    font-weight: 700;
-    margin-bottom: -8px;
-}
-
-.kpi-label {
-    font-size: 0.95rem;
-    color: #4a4a4a;
-    opacity: 0.9;
-}
-
 </style>
 """,
     unsafe_allow_html=True,
 )
 
+# Auth obligatoire
 require_login()
 
+
+# ------------------------------
+# LOAD DATA
+# ------------------------------
 df = load_data("data/e_commerce_sales.csv")
 
-st.title("📊 Tableau de bord — Ventes")
+st.title("Ventes")
 
-# -------------------------------------------------------------------
-# ------------------------ SECTION KPI ------------------------------
-# -------------------------------------------------------------------
+# ---------------------------------------------------
+# 🔥 Fonction animation des nombres (KPI animés)
+# ---------------------------------------------------
+def animate_number(final_value, duration=0.9, steps=35, integer=False):
+    """Affiche un nombre animée type dashboard pro"""
+    placeholder = st.empty()
+    increment = final_value / steps
+    delay = duration / steps
+    current = 0
 
-st.markdown("### 🔍 Indicateurs clés")
+    for _ in range(steps):
+        if integer:
+            txt = f"{int(current):,}".replace(",", " ")
+        else:
+            txt = f"{current:,.2f}".replace(",", " ")
 
-k1, k2, k3 = st.columns([2, 2, 3], gap="large")
+        placeholder.markdown(
+            f"<div style='font-size: 2rem; font-weight: 700;'>{txt}</div>",
+            unsafe_allow_html=True,
+        )
+        current += increment
+        time.sleep(delay)
+
+    # final clean value
+    if integer:
+        txt = f"{int(final_value):,}".replace(",", " ")
+    else:
+        txt = f"{final_value:,.2f}".replace(",", " ")
+
+    placeholder.markdown(
+        f"<div style='font-size: 2rem; font-weight: 700;'>{txt}</div>",
+        unsafe_allow_html=True,
+    )
 
 
-# ---- TEMPLATE DE STYLE GLASSMORPHISM ----
+# ---------------------------------------------------
+# ------------------- KPI SECTION -------------------
+# ---------------------------------------------------
+st.subheader("📊 Indicateurs clés")
+
+k1, k2, k3 = st.columns(3, gap="large")
+
 CARD_STYLE = """
 {
-    background: rgba(255, 255, 255, 0.55);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    padding: 25px;
-    border-radius: 18px;
-    border: 1px solid rgba(255,255,255,0.4);
-    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.12);
+    background: #E0F7FA;
+    padding: 22px;
+    border-radius: 20px;
     text-align: center;
+    border: 1.5px solid rgba(255,255,255,0.35);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.12);
 }
 """
 
-ICON_STYLE = "font-size: 26px; margin-bottom: 6px; color:#0A66C2;"
+LABEL = "font-size: 0.95rem; opacity: 0.85; margin-top: 6px;"
 
 
-# ====================== KPI 1 ======================
+# ------------- KPI 1 : Chiffre d'affaires -------------
 with k1:
     with stylable_container(key="kpi1", css_styles=CARD_STYLE):
-
-        st.markdown(f"<div style='{ICON_STYLE}'>💰</div>", unsafe_allow_html=True)
+        final = float(total_revenue(df))
+        animate_number(final, duration=1.0, steps=40, integer=True)
         st.markdown(
-            f"<div class='kpi-value'>{total_revenue(df):,.0f} €</div>",
+            f"<div style='{LABEL}'>Chiffre d'affaires total</div>",
             unsafe_allow_html=True,
         )
-        st.markdown("<div class='kpi-label'>Chiffre d'affaires total</div>", unsafe_allow_html=True)
 
 
-# ====================== KPI 2 ======================
+# ------------- KPI 2 : Panier moyen -------------
 with k2:
     with stylable_container(key="kpi2", css_styles=CARD_STYLE):
-
-        st.markdown(f"<div style='{ICON_STYLE}'>🛒</div>", unsafe_allow_html=True)
+        final = float(average_order_value(df))
+        animate_number(final, duration=1.0, steps=40, integer=False)
         st.markdown(
-            f"<div class='kpi-value'>{average_order_value(df):,.2f} €</div>",
+            f"<div style='{LABEL}'>Panier moyen</div>",
             unsafe_allow_html=True,
         )
-        st.markdown("<div class='kpi-label'>Panier moyen</div>", unsafe_allow_html=True)
 
 
-# ====================== KPI 3 ======================
+# ------------- KPI 3 : Produit le plus vendu -------------
 with k3:
     with stylable_container(key="kpi3", css_styles=CARD_STYLE):
-
         best_product = top_products(df, 1).iloc[0]["product"]
 
-        st.markdown(f"<div style='{ICON_STYLE}'>🏆</div>", unsafe_allow_html=True)
+        # Fade-in animation
+        placeholder = st.empty()
+        for opacity in [0.1, 0.3, 0.5, 0.8, 1]:
+            placeholder.markdown(
+                f"<div style='font-size: 2rem; font-weight: 700; opacity:{opacity};'>{best_product}</div>",
+                unsafe_allow_html=True,
+            )
+            time.sleep(0.05)
+
         st.markdown(
-            f"<div class='kpi-value'>{best_product}</div>",
+            f"<div style='{LABEL}'>Produit le plus vendu</div>",
             unsafe_allow_html=True,
         )
-        st.markdown("<div class='kpi-label'>Produit le plus vendu</div>", unsafe_allow_html=True)
 
 
+# ---------------------------------------------------
+# ----------------- GRAPHES SECTION -----------------
+# ---------------------------------------------------
 
-# -------------------------------------------------------------------
-# ---------------------- SECTION GRAPHIQUES --------------------------
-# -------------------------------------------------------------------
+st.subheader("📈 Visualisation des ventes")
 
-st.markdown("### 📈 Visualisation des performances")
-
-
-GRAPH_CARD = """
-{
-    background: rgba(255,255,255,0.6);
-    padding: 30px;
-    border-radius: 20px;
-    margin-top: 20px;
-    box-shadow: 0 3px 20px rgba(0,0,0,0.12);
-    border: 1px solid rgba(255,255,255,0.35);
-}
-"""
-
-
-# ----------- GRAPHE 1 -----------
-with stylable_container(key="graph_card_1", css_styles=GRAPH_CARD):
-    st.markdown("#### 📦 Répartition des ventes par catégorie")
+# ---------- GRAPH : ventes par catégorie ----------
+with stylable_container(
+    key="graph1_card",
+    css_styles="""
+        {
+            background: #E3F2FD;
+            padding: 25px;
+            border-radius: 20px;
+            margin-top: 10px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.10);
+        }
+    """,
+):
+    st.markdown("### 📌 Ventes par catégorie")
     plot_sales_by_category(df)
 
 
-# ----------- GRAPHE 2 -----------
-with stylable_container(key="graph_card_2", css_styles=GRAPH_CARD):
-    st.markdown("#### 📅 Évolution des ventes dans le temps")
+# ---------- GRAPH : évolution des ventes ----------
+with stylable_container(
+    key="graph2_card",
+    css_styles="""
+        {
+            background: #E3F2FD;
+            padding: 25px;
+            border-radius: 20px;
+            margin-top: 20px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.10);
+        }
+    """,
+):
+    st.markdown("### 📆 Évolution des ventes")
     plot_sales_over_time(df)
