@@ -52,7 +52,7 @@ def create_user(email: str, username: str, password: str):
         "username": username,
         "password_hash": password_hash,
         "salt": salt,
-        # "created_at": datetime.datetime.utcnow().isoformat(),  # facultatif si default NOW()
+        "created_at": datetime.datetime.utcnow().isoformat(),  # facultatif si default NOW()
     }
 
     try:
