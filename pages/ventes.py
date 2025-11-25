@@ -6,7 +6,6 @@ from utils.charts import plot_sales_by_category, plot_sales_over_time
 from utils.data_loader import load_data
 from utils.metrics import average_order_value, top_products, total_revenue
 
-require_login()
 
 st.markdown(
     """
@@ -18,6 +17,9 @@ st.markdown(
 """,
     unsafe_allow_html=True,
 )
+
+require_login()
+
 
 df = load_data("data/e_commerce_sales.csv")
 
