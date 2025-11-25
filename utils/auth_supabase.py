@@ -1,59 +1,65 @@
-# utils/auth_supabase.py
 import datetime
-import hashlib
 import secrets
-
+import hashlib
 import streamlit as st
 from supabase import create_client
 
-# -----------------------------
-# CONFIGURATION SUPABASE
-# -----------------------------
-SUPABASE_URL = st.secrets["supabase"]["url"]
-SERVICE_ROLE_KEY = st.secrets["supabase"]["service_role_key"]
-supabase = create_client(SUPABASE_URL, SERVICE_ROLE_KEY)
+# ============================================================
+#               SUPABASE (CACHÉ POUR PERFORMANCE)
+# ============================================================
+@st.cache_resource
+def get_supabase_client():
+    url = st.secrets["supabase"]["url"]
+    key = st.secrets["supabase"]["service_role_key"]
+    return create_client(url, key)
 
-# -----------------------------
-# CONSTANTES HASH
-# -----------------------------
+supabase = get_supabase_client()
+
+# Sécurité hash
 PBKDF2_ITER = 200_000
 HASH_NAME = "sha256"
 
 
-# -----------------------------
-# HASH DES MOTS DE PASSE
-# -----------------------------
+# ============================================================
+#                         HASH PASSWORDS
+# ============================================================
 def _hash_password(password: str, salt: str) -> str:
-    """Hash du mot de passe compatible DuckDB/Supabase"""
     return hashlib.pbkdf2_hmac(
         HASH_NAME, password.encode(), bytes.fromhex(salt), PBKDF2_ITER
     ).hex()
 
 
 def verify_password(stored_hash: str, salt_hex: str, password: str) -> bool:
-    """Vérifie le mot de passe"""
     return secrets.compare_digest(_hash_password(password, salt_hex), stored_hash)
 
 
-# -----------------------------
-# UTILISATEURS
-# -----------------------------
+# ============================================================
+#                    UTILISATEURS
+# ============================================================
 def get_user_by_email(email: str):
-    res = supabase.table("users").select("*").eq("email", email.lower()).execute()
+    res = supabase.table("users") \
+        .select("*") \
+        .eq("email", email.lower()) \
+        .execute()
+
     if res.data:
         return res.data[0]
     return None
 
 
 def create_user(email: str, username: str, password: str):
-    """Crée un utilisateur dans Supabase"""
+    """Crée un utilisateur Supabase (id AUTO-GÉNÉRÉ)."""
+
+    # empêcher les doublons
     if get_user_by_email(email):
-        st.error("Un compte existe déjà pour cet email.")
+        st.error("Un compte existe déjà avec cet email.")
         return None
 
+    # hash
     salt = secrets.token_hex(16)
     password_hash = _hash_password(password, salt)
-    user = {
+
+    user_dict = {
         "email": email.lower(),
         "username": username,
         "password_hash": password_hash,
@@ -62,11 +68,16 @@ def create_user(email: str, username: str, password: str):
     }
 
     try:
-        res = supabase.table("users").insert(user).execute()
-        if res.error:
-            st.error(f"Erreur lors de la création du compte: {res.error.message}")
+        res = supabase.table("users").insert(user_dict).execute()
+
+        # APIResponse n'a PAS status_code → on vérifie data
+        if not res.data:
+            st.error("Erreur : l'API Supabase n’a rien renvoyé.")
             return None
+
+        # récupère l'utilisateur avec l'id auto-incrémenté
         return get_user_by_email(email)
+
     except Exception as e:
         st.error(f"Erreur Supabase: {e}")
         return None
@@ -79,17 +90,15 @@ def authenticate_user(email: str, password: str):
     return None
 
 
-# -----------------------------
-# SESSIONS
-# -----------------------------
+# ============================================================
+#                    SESSIONS
+# ============================================================
 SESSION_DURATION_HOURS = 24 * 7  # 7 jours
-
 
 def create_session(user_id: int):
     token = secrets.token_urlsafe(32)
-    expires_at = datetime.datetime.utcnow() + datetime.timedelta(
-        hours=SESSION_DURATION_HOURS
-    )
+    expires_at = datetime.datetime.utcnow() + datetime.timedelta(hours=SESSION_DURATION_HOURS)
+
     session = {
         "token": token,
         "user_id": user_id,
@@ -97,25 +106,30 @@ def create_session(user_id: int):
         "expires_at": expires_at.isoformat(),
     }
 
-    res = supabase.table("sessions").insert(session).execute()
-    if res.error:
-        st.error(f"Erreur lors de la création de session: {res.error.message}")
-        return None
+    supabase.table("sessions").insert(session).execute()
 
     st.session_state["session_token"] = token
     st.session_state["user_id"] = user_id
+
     return token
 
 
 def get_session(token: str):
+    if not token:
+        return None
+
     res = supabase.table("sessions").select("*").eq("token", token).execute()
+
     if not res.data:
         return None
+
     session = res.data[0]
     expires_at = datetime.datetime.fromisoformat(session["expires_at"])
+
     if datetime.datetime.utcnow() > expires_at:
         delete_session(token)
         return None
+
     return session
 
 
@@ -128,13 +142,12 @@ def delete_session(token: str):
 
 def restore_session():
     if "session_token" not in st.session_state:
-        res = (
-            supabase.table("sessions")
-            .select("*")
-            .order("created_at", desc=True)
-            .limit(1)
+        res = supabase.table("sessions") \
+            .select("*") \
+            .order("created_at", desc=True) \
+            .limit(1) \
             .execute()
-        )
+
         if res.data:
             session = res.data[0]
             expires_at = datetime.datetime.fromisoformat(session["expires_at"])
@@ -151,18 +164,22 @@ def require_login():
         st.stop()
 
 
-# -----------------------------
-# FORMULAIRE STREAMLIT
-# -----------------------------
+# ============================================================
+#                  FORMULAIRES STREAMLIT
+# ============================================================
 def auth_form():
     tab_login, tab_signup = st.tabs(["Connexion", "Créer un compte"])
 
+    # -----------------------------
+    # Connexion
+    # -----------------------------
     with tab_login:
         st.subheader("Connexion")
-        with st.form("login_form", clear_on_submit=False):
+        with st.form("login_form"):
             email = st.text_input("Email")
             password = st.text_input("Mot de passe", type="password")
             submitted = st.form_submit_button("Se connecter")
+
             if submitted:
                 user = authenticate_user(email, password)
                 if user:
@@ -172,14 +189,18 @@ def auth_form():
                 else:
                     st.error("Email ou mot de passe incorrect.")
 
+    # -----------------------------
+    # Création de compte
+    # -----------------------------
     with tab_signup:
         st.subheader("Créer un compte")
-        with st.form("signup_form", clear_on_submit=True):
+        with st.form("signup_form"):
             email = st.text_input("Email")
-            username = st.text_input("Nom d'utilisateur")
+            username = st.text_input("Nom d’utilisateur")
             password = st.text_input("Mot de passe", type="password")
             password2 = st.text_input("Confirmer mot de passe", type="password")
             submitted = st.form_submit_button("Créer un compte")
+
             if submitted:
                 if not email or not username or not password:
                     st.error("Remplis tous les champs.")
