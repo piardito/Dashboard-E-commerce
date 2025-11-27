@@ -6,7 +6,7 @@
 
 ## Badges
 
-[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io)  
+[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://dashboard-e-commerce-arditop.streamlit.app/)  
 [![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
 
 ---
@@ -25,15 +25,15 @@ Ce projet permet de :
 ## Captures d’écran
 
 ### Page Ventes
-![Ventes](path/to/vente_screenshot.png)
+<img width="1325" height="850" alt="pages ventes" src="https://github.com/user-attachments/assets/4b60ad18-2a65-4a5d-82e2-c184bdedfbee" />
 
 ### Page Clients
-![Clients](path/to/clients_screenshot.png)
+<img width="1325" height="857" alt="pages clients" src="https://github.com/user-attachments/assets/4d404f07-1065-4f59-aafc-baf432f7bc42" />
 
 ### Page Analyses
-![Analyses](path/to/analyses_screenshot.png)
 
-> Remplace `path/to/...` par le chemin réel vers tes images dans le repo (par exemple `images/ventes.png`).
+<img width="1333" height="862" alt="page analyses" src="https://github.com/user-attachments/assets/e6304c43-e588-4eb2-ab85-cc43918fc6bb" />
+
 
 ---
 
@@ -45,12 +45,3 @@ Ce projet permet de :
 - [Plotly](https://plotly.com/python/)
 - [DuckDB / Pandas](https://duckdb.org/)
 
----
-
-## Installation
-
-1. Cloner le repo :
-
-```bash
-git clone https://github.com/ton-utilisateur/ton-repo.git
-cd ton-repo
