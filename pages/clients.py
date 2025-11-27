@@ -1,12 +1,13 @@
 import plotly.express as px
 from streamlit_extras.stylable_container import stylable_container
 import streamlit as st
+
 from utils.auth_supabase import require_login
 from utils.data_loader import load_data
 
-# ---------------------------------------------------
-# 🔵 Background général
-# ---------------------------------------------------
+# ----------------------------------------------------------
+# 🎨 Background global
+# ----------------------------------------------------------
 st.markdown(
     """
 <style>
@@ -18,39 +19,38 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Sécurité
+# --- Auth ---
 require_login()
 
-# ---------------------------------------------------
-# 🔵 HEADER
-# ---------------------------------------------------
+# ----------------------------------------------------------
+# 🧭 Header
+# ----------------------------------------------------------
 with stylable_container(
-    key="header_clients",
-    css_styles="""
+        key="header_clients",
+        css_styles="""
         {
             color: black;
-            padding: 5px;
         }
-        h1 {
-            margin: 0;
-            font-size: 2rem;
-            font-weight: 700;
-        }
+        h1 { margin: 0; font-size: 2rem; font-weight: 700; }
     """,
 ):
-    st.markdown("<h1>👥 Clients</h1>", unsafe_allow_html=True)
+    st.markdown("<h1>Clients</h1>", unsafe_allow_html=True)
 
-
-# ---------------------------------------------------
-# 📊 Chargement des données
-# ---------------------------------------------------
+# ----------------------------------------------------------
+# 📊 Load data
+# ----------------------------------------------------------
 df = load_data("data/e_commerce_sales.csv")
 
-st.subheader("📈 Analyse des clients")
+st.subheader("📈 Analyse Clients")
 
-# ---------------------------------------------------
-# 🔹 Graphique 1 — Âges
-# ---------------------------------------------------
+# ----------------------------------------------------------
+# 🎨 PALETTE UNIFIÉE (UTILISÉE DANS TOUS LES GRAPHIQUES)
+# ----------------------------------------------------------
+PALETTE = ["#29B6F6", "#4DD0E1", "#0288D1", "#81D4FA", "#B3E5FC"]
+
+# ----------------------------------------------------------
+# 🔹 Répartition des âges (BAR)
+# ----------------------------------------------------------
 age_counts = df["customer_age"].value_counts().reset_index()
 age_counts.columns = ["age", "count"]
 
@@ -59,43 +59,44 @@ fig_age = px.bar(
     x="age",
     y="count",
     title="Répartition par âge",
-    labels={"count": "Nombre de clients", "age": "Âge"},
+    labels={"count": "Nombre", "age": "Âge"},
     color="age",
-    color_continuous_scale=px.colors.sequential.OrRd,
+    color_discrete_sequence=PALETTE,
 )
 
 fig_age.update_layout(
+    plot_bgcolor="#D8ECFF",
+    paper_bgcolor="#D8ECFF",
     font_color="#212529",
-    margin=dict(l=20, r=20, t=60, b=20),
+    height=400,
 )
 
-# ---- Card stylée matching VENTES ----
+# ---- Card ----
 with stylable_container(
-    key="age_card",
-    css_styles="""
-        {
-            background: #E0F7FA;
+        key="age_card",
+        css_styles="""
+         {
+            background: #E3F2FD;
             padding: 25px;
             border-radius: 20px;
-            margin-top: 15px;
-            border: 2px solid rgba(255,255,255,0.35);
-            box-shadow: 0 8px 20px rgba(0, 119, 255, 0.25);
+            margin-top: 20px;
+            border: 1px solid rgba(255,255,255,0.4);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
         }
+
         h3 {
-            font-size: 1.35rem;
-            font-weight: 700;
-            color: #01579b;
+            font-size: 1.3rem;
             margin-bottom: 10px;
+            color: #0d47a1;
         }
     """,
 ):
     st.markdown("### 🎂 Répartition des âges")
     st.plotly_chart(fig_age, use_container_width=True)
 
-
-# ---------------------------------------------------
-# 🔹 Graphique 2 — Genre
-# ---------------------------------------------------
+# ----------------------------------------------------------
+# 🔹 Répartition par genre (PIE)
+# ----------------------------------------------------------
 gender_counts = df["customer_gender"].value_counts().reset_index()
 gender_counts.columns = ["gender", "count"]
 
@@ -104,31 +105,34 @@ fig_gender = px.pie(
     names="gender",
     values="count",
     title="Répartition par genre",
-    color_discrete_sequence=["#FDBA74", "#ADD8E6"],
+    color="gender",
+    color_discrete_sequence=["#29B6F6", "#FFB74D"],  # BLEU + ORANGE COMME DASHBOARD
 )
 
 fig_gender.update_layout(
+    plot_bgcolor="#D8ECFF",
+    paper_bgcolor="#D8ECFF",
     font_color="#212529",
-    margin=dict(l=20, r=20, t=60, b=20),
-    legend=dict(x=0.9, y=1),
+    uniformtext_minsize=10,
+    margin=dict(l=40, r=40, t=60, b=40),
 )
 
-# ---- Card stylée matching VENTES ----
+# ---- Card ----
 with stylable_container(
-    key="gender_card",
-    css_styles="""
+        key="gender_card",
+        css_styles="""
         {
-            background: #E0F7FA;
+            background: #E3F2FD;
             padding: 25px;
             border-radius: 20px;
             margin-top: 20px;
-            border: 2px solid rgba(255,255,255,0.35);
-            box-shadow: 0 8px 20px rgba(0, 119, 255, 0.25);
+            border: 1px solid rgba(255,255,255,0.4);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
         }
         h3 {
-            font-size: 1.35rem;
-            font-weight: 700;
-            color: #01579b;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: #0d47a1;
         }
     """,
 ):
