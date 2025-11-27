@@ -1,35 +1,35 @@
 import plotly.express as px
 from streamlit_extras.stylable_container import stylable_container
-
 import streamlit as st
 from utils.auth_supabase import require_login
 from utils.data_loader import load_data
 
+# ---------------------------------------------------
+# 🔵 Background général
+# ---------------------------------------------------
 st.markdown(
     """
 <style>
 .stApp {
-    background: linear-gradient(135deg, #D0E8FF, #4DD0E1);  /* bleu clair dégradé */
+    background: linear-gradient(135deg, #D0E8FF, #4DD0E1);
 }
 </style>
 """,
     unsafe_allow_html=True,
 )
 
-# --- Sécurité ---
+# Sécurité
 require_login()
 
-# --- Style global ---
-
-
 # ---------------------------------------------------
-# 🔵 HEADER stylisé
+# 🔵 HEADER
 # ---------------------------------------------------
 with stylable_container(
     key="header_clients",
     css_styles="""
         {
             color: black;
+            padding: 5px;
         }
         h1 {
             margin: 0;
@@ -38,7 +38,7 @@ with stylable_container(
         }
     """,
 ):
-    st.markdown("<h1> Clients</h1>", unsafe_allow_html=True)
+    st.markdown("<h1>👥 Clients</h1>", unsafe_allow_html=True)
 
 
 # ---------------------------------------------------
@@ -46,10 +46,10 @@ with stylable_container(
 # ---------------------------------------------------
 df = load_data("data/e_commerce_sales.csv")
 
-st.subheader("📈 Analyse Clients")
+st.subheader("📈 Analyse des clients")
 
 # ---------------------------------------------------
-# 🔹 Répartition des âges (BAR)
+# 🔹 Graphique 1 — Âges
 # ---------------------------------------------------
 age_counts = df["customer_age"].value_counts().reset_index()
 age_counts.columns = ["age", "count"]
@@ -59,38 +59,33 @@ fig_age = px.bar(
     x="age",
     y="count",
     title="Répartition par âge",
-    labels={"count": "Nombre", "age": "Âge"},
+    labels={"count": "Nombre de clients", "age": "Âge"},
     color="age",
     color_continuous_scale=px.colors.sequential.OrRd,
 )
 
 fig_age.update_layout(
-    plot_bgcolor="#D8ECFF",
-    paper_bgcolor="#D8ECFF",
     font_color="#212529",
-    width=100,  # largeur en pixels
-    height=400,
+    margin=dict(l=20, r=20, t=60, b=20),
 )
 
-
-# ---- Ajout dans une card stylée ----
+# ---- Card stylée matching VENTES ----
 with stylable_container(
     key="age_card",
     css_styles="""
-         {
-            background: #E3F2FD;
+        {
+            background: #E0F7FA;
             padding: 25px;
             border-radius: 20px;
-            margin-top: 20px;
-            border: 1px solid rgba(255,255,255,0.4);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
-        }
-        
+            margin-top: 15px;
+            border: 2px solid rgba(255,255,255,0.35);
+            box-shadow: 0 8px 20px rgba(0, 119, 255, 0.25);
         }
         h3 {
-            font-size: 1.3rem;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #01579b;
             margin-bottom: 10px;
-            color: #0d47a1;
         }
     """,
 ):
@@ -99,7 +94,7 @@ with stylable_container(
 
 
 # ---------------------------------------------------
-# 🔹 Répartition par genre (PIE)
+# 🔹 Graphique 2 — Genre
 # ---------------------------------------------------
 gender_counts = df["customer_gender"].value_counts().reset_index()
 gender_counts.columns = ["gender", "count"]
@@ -113,35 +108,27 @@ fig_gender = px.pie(
 )
 
 fig_gender.update_layout(
-    plot_bgcolor="#D8ECFF",
-    paper_bgcolor="#D8ECFF",
     font_color="#212529",
-    uniformtext_minsize=8,
-    margin=dict(l=60, r=140, t=80, b=60),
-    legend=dict(
-        x=1.05,
-        y=1,
-        bgcolor="rgba(255,255,255,0)",
-    ),
+    margin=dict(l=20, r=20, t=60, b=20),
+    legend=dict(x=0.9, y=1),
 )
 
-# ---- Card stylée PIE ----
+# ---- Card stylée matching VENTES ----
 with stylable_container(
     key="gender_card",
     css_styles="""
         {
-            background: #E3F2FD;
+            background: #E0F7FA;
             padding: 25px;
             border-radius: 20px;
             margin-top: 20px;
-            border: 1px solid rgba(255,255,255,0.4);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
-}
+            border: 2px solid rgba(255,255,255,0.35);
+            box-shadow: 0 8px 20px rgba(0, 119, 255, 0.25);
         }
         h3 {
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-            color: #0d47a1;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #01579b;
         }
     """,
 ):
