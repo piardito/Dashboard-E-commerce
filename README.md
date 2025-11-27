@@ -1,5 +1,7 @@
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://dashboard-e-commerce-arditop.streamlit.app/)
 
+[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
+
 
 <img width="1330" height="847" alt="page_principale_app" src="https://github.com/user-attachments/assets/2210f81c-0a1d-441b-b183-8f3f795033e8" />
 
@@ -14,4 +16,3 @@
 <img width="1325" height="850" alt="pages ventes" src="https://github.com/user-attachments/assets/22615808-0cce-420e-8069-de56dadf3921" />
 
 
-Gestion des utilisateurs avec Supabase
