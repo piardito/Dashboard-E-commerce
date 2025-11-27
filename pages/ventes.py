@@ -41,7 +41,24 @@ require_login()
 # Load data
 df = load_data("data/e_commerce_sales.csv")
 
-st.title("Ventes")
+# 🏷️ HEADER IDENTIQUE AUX AUTRES PAGES
+# ------------------------------------------------------
+with stylable_container(
+    key="header_ventes",
+    css_styles="""
+        {
+            padding: 8px 0;
+            color: black;
+        }
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 700;
+            color: black !important;
+        }
+    """,
+):
+    st.markdown("<h1>Ventes</h1>", unsafe_allow_html=True)
 
 
 # ---------------------------------------------------
