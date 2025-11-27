@@ -45,22 +45,18 @@ Ce projet permet de :
 - [Plotly](https://plotly.com/python/)
 - [DuckDB / Pandas](https://duckdb.org/)
 
-Organisation du projet :
 
-├── main.py
-├── pages/
-│   ├── ventes.py
-│   ├── clients.py
-│   └── analyses.py
-├── utils/
-│   ├── auth_supabase.py
-│   ├── charts.py
-│   ├── data_loader.py
-│   └── metrics.py
-├── data/
-│   └── e_commerce_sales.csv
-└── README.md
+### Description rapide des dossiers et fichiers :
 
-
-
-
+- **main.py** : point d’entrée principal de l’application.
+- **pages/** : contient les pages secondaires de l’app :
+  - `ventes.py` : page des ventes et KPIs.
+  - `clients.py` : page analyse clients.
+  - `analyses.py` : analyses régionales et autres métriques.
+- **utils/** : fonctions utilitaires partagées :
+  - `auth_supabase.py` : gestion de l’authentification via Supabase.
+  - `charts.py` : fonctions de visualisation.
+  - `data_loader.py` : chargement des données.
+  - `metrics.py` : calcul des métriques clés (CA, panier moyen…).
+- **data/** : fichiers CSV ou bases de données locales.
+- **README.md** : documentation du projet.
