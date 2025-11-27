@@ -1,18 +1,56 @@
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://dashboard-e-commerce-arditop.streamlit.app/)
+# Dashboard E-commerce
 
+> Dashboard interactif pour visualiser les ventes et les clients, construit avec **Streamlit** et **Supabase**.
+
+---
+
+## Badges
+
+[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io)  
 [![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
 
+---
 
-<img width="1330" height="847" alt="page_principale_app" src="https://github.com/user-attachments/assets/2210f81c-0a1d-441b-b183-8f3f795033e8" />
+## Description
 
-<img width="1302" height="857" alt="creation de compte" src="https://github.com/user-attachments/assets/58829275-be6a-42ba-af5e-c1bec68be63f" />
+Ce projet permet de :
 
-<img width="1333" height="862" alt="page accueil" src="https://github.com/user-attachments/assets/892acc90-eb99-4ba2-b0e6-e1dcf863d579" />
+- Visualiser les ventes par catégorie et dans le temps.
+- Suivre les indicateurs clés : chiffre d’affaires, panier moyen, produit le plus vendu.
+- Analyser les clients par âge, genre et région.
+- Gérer l’authentification avec Supabase (connexion, création de compte, sessions).
 
-<img width="1333" height="862" alt="page analyses" src="https://github.com/user-attachments/assets/181346af-d605-4248-8012-83fa08be6e26" />
+---
 
-<img width="1325" height="857" alt="pages clients" src="https://github.com/user-attachments/assets/90e8a530-0d35-404f-b998-7ccffcc9c3a2" />
+## Captures d’écran
 
-<img width="1325" height="850" alt="pages ventes" src="https://github.com/user-attachments/assets/22615808-0cce-420e-8069-de56dadf3921" />
+### Page Ventes
+![Ventes](path/to/vente_screenshot.png)
 
+### Page Clients
+![Clients](path/to/clients_screenshot.png)
 
+### Page Analyses
+![Analyses](path/to/analyses_screenshot.png)
+
+> Remplace `path/to/...` par le chemin réel vers tes images dans le repo (par exemple `images/ventes.png`).
+
+---
+
+## Technologies utilisées
+
+- [Python 3.13](https://www.python.org/)
+- [Streamlit](https://streamlit.io/)
+- [Supabase](https://supabase.com)
+- [Plotly](https://plotly.com/python/)
+- [DuckDB / Pandas](https://duckdb.org/)
+
+---
+
+## Installation
+
+1. Cloner le repo :
+
+```bash
+git clone https://github.com/ton-utilisateur/ton-repo.git
+cd ton-repo
