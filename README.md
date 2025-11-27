@@ -46,7 +46,7 @@ Ce projet permet de :
 - [DuckDB / Pandas](https://duckdb.org/)
 
 Organisation du projet :
-.
+
 ├── main.py
 ├── pages/
 │   ├── ventes.py
@@ -60,6 +60,7 @@ Organisation du projet :
 ├── data/
 │   └── e_commerce_sales.csv
 └── README.md
+
 
 
 
