@@ -12,3 +12,6 @@
 <img width="1325" height="857" alt="pages clients" src="https://github.com/user-attachments/assets/90e8a530-0d35-404f-b998-7ccffcc9c3a2" />
 
 <img width="1325" height="850" alt="pages ventes" src="https://github.com/user-attachments/assets/22615808-0cce-420e-8069-de56dadf3921" />
+
+
+Gestion des utilisateurs avec Supabase
