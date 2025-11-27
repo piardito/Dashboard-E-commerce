@@ -5,6 +5,7 @@ import streamlit as st
 from utils.auth_supabase import require_login
 from utils.data_loader import load_data
 
+
 # ----------------------------------------------------------
 # 🎨 Background global
 # ----------------------------------------------------------
@@ -23,15 +24,21 @@ st.markdown(
 require_login()
 
 # ----------------------------------------------------------
-# 🧭 Header
+# 🏷️ HEADER IDENTIQUE À VENTES.PY
 # ----------------------------------------------------------
 with stylable_container(
-        key="header_clients",
-        css_styles="""
+    key="header_clients",
+    css_styles="""
         {
+            padding: 8px 0;
             color: black;
         }
-        h1 { margin: 0; font-size: 2rem; font-weight: 700; }
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 700;
+            color: black !important;
+        }
     """,
 ):
     st.markdown("<h1>Clients</h1>", unsafe_allow_html=True)
@@ -44,7 +51,7 @@ df = load_data("data/e_commerce_sales.csv")
 st.subheader("📈 Analyse Clients")
 
 # ----------------------------------------------------------
-# 🎨 PALETTE UNIFIÉE (UTILISÉE DANS TOUS LES GRAPHIQUES)
+# 🎨 Palette harmonisée avec ventes.py
 # ----------------------------------------------------------
 PALETTE = ["#29B6F6", "#4DD0E1", "#0288D1", "#81D4FA", "#B3E5FC"]
 
@@ -71,10 +78,9 @@ fig_age.update_layout(
     height=400,
 )
 
-# ---- Card ----
 with stylable_container(
-        key="age_card",
-        css_styles="""
+    key="age_card",
+    css_styles="""
          {
             background: #E3F2FD;
             padding: 25px;
@@ -82,12 +88,6 @@ with stylable_container(
             margin-top: 20px;
             border: 1px solid rgba(255,255,255,0.4);
             box-shadow: 0 15px 40px rgba(0,0,0,0.25);
-        }
-
-        h3 {
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-            color: #0d47a1;
         }
     """,
 ):
@@ -106,7 +106,7 @@ fig_gender = px.pie(
     values="count",
     title="Répartition par genre",
     color="gender",
-    color_discrete_sequence=["#29B6F6", "#FFB74D"],  # BLEU + ORANGE COMME DASHBOARD
+    color_discrete_sequence=["#29B6F6", "#FFB74D"],
 )
 
 fig_gender.update_layout(
@@ -117,10 +117,9 @@ fig_gender.update_layout(
     margin=dict(l=40, r=40, t=60, b=40),
 )
 
-# ---- Card ----
 with stylable_container(
-        key="gender_card",
-        css_styles="""
+    key="gender_card",
+    css_styles="""
         {
             background: #E3F2FD;
             padding: 25px;
@@ -128,11 +127,6 @@ with stylable_container(
             margin-top: 20px;
             border: 1px solid rgba(255,255,255,0.4);
             box-shadow: 0 15px 40px rgba(0,0,0,0.25);
-        }
-        h3 {
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-            color: #0d47a1;
         }
     """,
 ):
