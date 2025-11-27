@@ -45,3 +45,21 @@ Ce projet permet de :
 - [Plotly](https://plotly.com/python/)
 - [DuckDB / Pandas](https://duckdb.org/)
 
+Organisation du projet :
+.
+├── main.py
+├── pages/
+│   ├── ventes.py
+│   ├── clients.py
+│   └── analyses.py
+├── utils/
+│   ├── auth_supabase.py
+│   ├── charts.py
+│   ├── data_loader.py
+│   └── metrics.py
+├── data/
+│   └── e_commerce_sales.csv
+└── README.md
+
+
+
